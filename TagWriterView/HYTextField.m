@@ -10,6 +10,14 @@
 
 @implementation HYTextField
 
+
+/**
+ *  iOS 8.1到8.2 存在BUG，textFile 在 empty的情况下，使用删除见无法触发事件。 
+ *
+ *  @param textField
+ *
+ *  @return
+ */
 - (BOOL)keyboardInputShouldDelete:(UITextField *)textField {
     BOOL shouldDelete = YES;
     
