@@ -41,7 +41,7 @@
 
 
 
--(void)tagWriteView:(HYTagWriterView *)view exceedMaxWdith:(BOOL)exceedMaxWdith{
+-(void)tagWriteView:(HYTagWriterView *)view exceedMaxWidth:(BOOL)exceedMaxWdith{
 
     CALayer *lbl = [ view.inputView layer];
     CGPoint posLbl = [lbl position];
