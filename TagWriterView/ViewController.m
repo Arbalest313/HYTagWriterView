@@ -38,7 +38,9 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)tagWriteView:(HYTagWriterView *)view exceedMaxLength:(BOOL)exceedMaxLength{
+
+
+-(void)tagWriteView:(HYTagWriterView *)view exceedMaxWdith:(BOOL)exceedMaxWdith{
 //    UIAlertView *toast = [[UIAlertView alloc] initWithTitle:nil
 //                                                    message:@"超出最大长度"
 //                                                   delegate:nil

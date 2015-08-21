@@ -12,7 +12,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 @property (nonatomic, strong) NSMutableArray *tagsMade;
 @property (nonatomic, assign) BOOL readyToDelete;
 @property (nonatomic, assign) BOOL readyToFinishMaking;
-@property (nonatomic, assign) BOOL exceedMaxLenth;
+@property (nonatomic, assign) BOOL exceedMaxWidth;
 @property (nonatomic, assign) BOOL addOneMoreRow;
 
 @property (nonatomic, assign) CGFloat accumX;
@@ -84,7 +84,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     _inputView.delegate = self;
     _inputView.returnKeyType = UIReturnKeyDone;
     
-//    _inputView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
+    _inputView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin ;//| UIViewAutoresizingFlexibleTopMargin;
     [_scrollView addSubview:_inputView];
     
     _deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(30, 0, 20, 20)];
@@ -111,7 +111,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     
     _readyToDelete = NO;
     
-    _exceedMaxLenth = NO;
+    _exceedMaxWidth = NO;
     
     _textViewHeight=25;
     _textViewWidth = 75;
@@ -204,6 +204,13 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 
 
 //mark : - tagview的btn 添加与删除
+- (void)clear
+{
+    _inputView.text = @"";
+    [_tagsMade removeAllObjects];
+    [self reArrangeSubviews];
+}
+
 - (void)addTags:(NSArray *)tags
 {
 //    for (NSString *tag in tags)
@@ -316,7 +323,6 @@ static CGFloat IPHONE5_WIDTH = 640/2;
             
             viewFrame.origin.x = posX;
             viewFrame.origin.y = posY;
-            NSLog(@"here2%f",posY);
             view.frame = viewFrame;
             
             posX += viewFrame.size.width + _tagGap;
@@ -345,39 +351,15 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 
 // MARK: -  interfaces
 -(void)increaseViewHeight{
-    CGFloat inputViewY = _inputView.frame.origin.y;
+  //  CGFloat inputViewY = _inputView.frame.origin.y;
     CGRect rect =self.frame;
     rect.size.height = _inputView.frame.origin.y + _textViewHeight+_tagGap;
-    NSLog(@"----inputView y3.0: %f", _inputView.frame.origin.y);
-
-    NSLog(@"----self frame H3.1.1: %f", self.frame.origin.y);
-    NSLog(@"----self bounds H3.1.2: %f", self.bounds.origin.y);
-    //    _scrollView.frame = self.bounds;
     
-    NSLog(@"----_scrollview frame H3.2.1: %f", _scrollView.frame.origin.y);
-    NSLog(@"----_scrollview contentsize H3.2.2: %f", _scrollView.contentSize.height);
-//    rect = _scrollView.frame;
-//    rect.size.height = _inputView.frame.origin.y + _textViewHeight+_tagGap;
-//    _scrollView.frame = rect;
-
     [UIView animateWithDuration:0.25 animations:^{
         self.frame = rect;
         
     }];
     
-    rect = _inputView.frame;
-    
-    rect.origin.y = inputViewY;
-    _inputView.frame = rect;
-    NSLog(@"++++inputView y3.1: %f", _inputView.frame.origin.y);
-    NSLog(@"++++self frame H3.1.1: %f", self.frame.origin.y);
-    NSLog(@"++++self bounds H3.1.2: %f", self.bounds.origin.y);
-    //    _scrollView.frame = self.bounds;
-
-    NSLog(@"++++_scrollview frame H3.2.1: %f", _scrollView.frame.origin.y);
-    NSLog(@"++++_scrollview contentsize H3.2.2: %f", _scrollView.contentSize.height);
-
-    NSLog(@"inputView y3.2: %f", _inputView.frame.origin.y);
 
     if ([_delegate respondsToSelector:@selector(tagWriteView:increaseViewHeigt:)]) {
         [_delegate tagWriteView:self increaseViewHeigt:_textViewHeight+_tagGap];
@@ -471,7 +453,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 
 -(void)textFiledEditChanged:(NSNotification *)obj{
      NSLog(@"|=====2");
-    _exceedMaxLenth = NO;
+    _exceedMaxWidth = NO;
     HYTextField *textField = (HYTextField *)obj.object;
     
     NSString *toBeString = textField.text;
@@ -596,18 +578,6 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 - (void)setScrollOffsetToShowInputView
 {
 
-//    NSLog(@"%@---|---%@",NSStringFromCGSize(_scrollView.contentSize),NSStringFromCGSize(self.frame.size));
-//    
-//    CGRect inputRect = _inputView.frame;
-//    CGFloat scrollingDelta = (inputRect.origin.x + inputRect.size.width) -self.frame.size.width* 0.8;
-//    
-//    if (scrollingDelta > 0 && (_scrollView.contentSize.height>self.frame.size.height) ) {
-//        CGPoint scrollOffset = _scrollView.contentOffset;
-//        scrollOffset.y = inputRect.origin.y + _textViewHeight *2;
-//        _scrollView.contentOffset = scrollOffset;
-//
-//    }
-//
     if ((_inputView.frame.origin.y + _textViewHeight >= self.frame.size.height && _viewMaxHeight >= self.frame.size.height + _textViewHeight + _tagGap )||_readyToDelete ) {
         NSLog(@"inputView y3: %f", _inputView.frame.origin.y);
 
@@ -628,7 +598,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 -(void) setinputRectWidth:(int)newWidth{
     CGFloat maxWidth = (self.frame.size.width > IPHONE5_WIDTH) ? IPHONE5_WIDTH : self.frame.size.width;
     if (newWidth >= maxWidth - 2*_tagGap) {
-        _exceedMaxLenth=YES;
+        _exceedMaxWidth=YES;
         return;
     }
     CGRect inputRect = _inputView.frame;
@@ -758,10 +728,10 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     NSLog(@"|=====1");
     if ([self isFinishLetter:text])
     {
-        if (_exceedMaxLenth) {
-            if ([_delegate respondsToSelector:@selector(tagWriteView:exceedMaxLength:)])
+        if (_exceedMaxWidth) {
+            if ([_delegate respondsToSelector:@selector(tagWriteView:exceedMaxWidth:)])
             {
-                [_delegate tagWriteView:self exceedMaxLength:_exceedMaxLenth];
+                [_delegate tagWriteView:self exceedMaxWidth:_exceedMaxWidth];
             }
             return NO;
         }
@@ -802,14 +772,52 @@ static CGFloat IPHONE5_WIDTH = 640/2;
         
     }
     
-//    if (_inputView.frame.size.width+_inputView.frame.origin.x >= self.frame.size.width-2*_tagGap) {
-//        NSLog(@"|+===3");
-//        return NO;
-//    }
     
     return YES;
 
 }
 
+- (void)textViewDidChange:(UITextView *)textView
+{
+    if ([_delegate respondsToSelector:@selector(tagWriteView:didChangeText:)])
+    {
+        [_delegate tagWriteView:self didChangeText:textView.text];
+    }
+    
+    if (_deleteButton.hidden == NO)
+    {
+        _deleteButton.hidden = YES;
+    }
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView
+{
+    if ([_delegate respondsToSelector:@selector(tagWriteViewDidBeginEditing:)])
+    {
+        [_delegate tagWriteViewDidBeginEditing:self];
+    }
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    
+    
+    if ([_delegate respondsToSelector:@selector(tagWriteViewDidEndEditing:)])
+    {
+        [_delegate tagWriteViewDidEndEditing:self];
+    }
+}
+
+-(void)setTagViewsColor:(UIColor *)color forTag:(NSString*)tag{
+    for (UIButton *btn in _tagViews)
+    {
+        if ([btn.titleLabel.text isEqualToString:tag]) {
+            [btn setTitleColor:color forState:UIControlStateNormal];
+//            [btn showBorder:color];
+            [self showBorderForView:btn color:color];
+        }
+    }
+    
+}
 
 @end

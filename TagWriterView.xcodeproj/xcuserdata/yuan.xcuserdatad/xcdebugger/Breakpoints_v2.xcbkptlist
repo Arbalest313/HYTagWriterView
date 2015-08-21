@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TagWriterView/HYTagWriterView.m"
-            timestampString = "461824435.521864"
+            timestampString = "461833345.510863"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "483"
-            endingLineNumber = "483"
+            startingLineNumber = "465"
+            endingLineNumber = "465"
             landmarkName = "-textFiledEditChanged:"
             landmarkType = "5">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TagWriterView/HYTagWriterView.m"
-            timestampString = "461824435.521864"
+            timestampString = "461833345.510863"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "482"
-            endingLineNumber = "482"
+            startingLineNumber = "464"
+            endingLineNumber = "464"
             landmarkName = "-textFiledEditChanged:"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TagWriterView/HYTagWriterView.m"
-            timestampString = "461824435.521864"
+            timestampString = "461833345.510863"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "448"
-            endingLineNumber = "448"
+            startingLineNumber = "430"
+            endingLineNumber = "430"
             landmarkName = "-tagButtonWithTag:posX:posY:"
             landmarkType = "5">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TagWriterView/HYTagWriterView.m"
-            timestampString = "461824435.521864"
+            timestampString = "461833345.510863"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "680"
-            endingLineNumber = "680"
+            startingLineNumber = "650"
+            endingLineNumber = "650"
             landmarkName = "-detectBackspace"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "TagWriterView/HYTagWriterView.m"
-            timestampString = "461824435.521864"
+            timestampString = "461833345.510863"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "515"
-            endingLineNumber = "515"
+            startingLineNumber = "497"
+            endingLineNumber = "497"
             landmarkName = "-textFiledEditChanged:"
             landmarkType = "5">
          </BreakpointContent>

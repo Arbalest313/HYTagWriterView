@@ -34,14 +34,6 @@
 
 
 - (void)deleteBackward {
-//    NSLog(@"123删除");
-//    if (self.text.length <= 0) {
-//        if ([_myDelegate respondsToSelector:@selector(textFieldDidDelete)]){
-//            [_myDelegate textFieldDidDelete];
-//         }
-//    }
-//    
-//    [super deleteBackward];
 
     BOOL shouldDismiss = [self.text length] == 0;
     

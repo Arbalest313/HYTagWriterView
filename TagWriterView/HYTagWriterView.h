@@ -64,15 +64,69 @@
 
 @protocol HYTagWriterViewDelegate <NSObject>
 @optional
+
+/**
+ *  user start to type tag in the textfield
+ *
+ *  @param view self
+ */
+
 - (void)tagWriteViewDidBeginEditing:(HYTagWriterView *)view;
+
+/**
+ *  user end eddinting
+ *
+ *  @param view self;
+ */
 - (void)tagWriteViewDidEndEditing:(HYTagWriterView *)view;
 
+
+/**
+ *  if the input textfield text changed
+ *
+ *  @param view self
+ *  @param text the changed text
+ */
 - (void)tagWriteView:(HYTagWriterView *)view didChangeText:(NSString *)text;
+/**
+ *  if the retrun key is pressed by user
+ *
+ *  @param view self
+ *  @param tag  the tag that user inputed
+ */
 - (void)tagWriteView:(HYTagWriterView *)view didMakeTag:(NSString *)tag;
+
+/**
+ *  if a tag is removed, this func is called
+ *
+ *  @param view  self
+ *  @param tag  the removed tag
+ */
 - (void)tagWriteView:(HYTagWriterView *)view didRemoveTag:(NSString *)tag;
+
+/**
+ *  if a tag button is selected
+ *
+ *  @param view self
+ *  @param tag  the selected tag
+ */
 - (void)tagWriteView:(HYTagWriterView *)view didSelect:(NSString *)tag;
 
-- (void)tagWriteView:(HYTagWriterView *)view exceedMaxLength:(BOOL)exceedMaxLength;
+
+/**
+ *  if exceed maxlength of the input textField
+ *
+ *  @param view            self
+ *  @param exceedMaxLength the maximum width of textField
+ */
+- (void)tagWriteView:(HYTagWriterView *)view exceedMaxWidth:(BOOL)exceedMaxWidth;
+
+/**
+ *  increase the HYTagView height by height
+ *
+ *  @param view   self
+ *  @param height the heigth increased
+ */
 - (void)tagWriteView:(HYTagWriterView *)view increaseViewHeigt:(CGFloat)height;
 
 
