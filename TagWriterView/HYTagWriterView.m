@@ -17,6 +17,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 
 @property (nonatomic, assign) CGFloat accumX;
 @property (nonatomic, assign) CGFloat accumY;
+@property (nonatomic, strong) CAShapeLayer* border;
 
 
 @end
@@ -84,13 +85,23 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     _inputView.delegate = self;
     _inputView.returnKeyType = UIReturnKeyDone;
     
-    _inputView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin ;//| UIViewAutoresizingFlexibleTopMargin;
+//    _inputView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin ;//| UIViewAutoresizingFlexibleTopMargin;
     [_scrollView addSubview:_inputView];
     
     _deleteButton = [[UIButton alloc] initWithFrame:CGRectMake(30, 0, 20, 20)];
     [_deleteButton setBackgroundImage:[UIImage imageNamed:@"Delete.png"] forState:UIControlStateNormal];
     [_deleteButton addTarget:self action:@selector(deleteTagDidPush:) forControlEvents:UIControlEventTouchUpInside];
     _deleteButton.hidden = YES;
+    
+    
+    
+    _border = [CAShapeLayer layer];
+    _border.strokeColor = [UIColor colorWithRed:67/255.0f green:37/255.0f blue:83/255.0f alpha:1].CGColor;
+
+    _border.fillColor = nil;
+    _border.lineDashPattern = @[@1, @1];
+    _border.path = [UIBezierPath bezierPathWithRoundedRect:_inputView.bounds cornerRadius:_inputView.frame.size.height*0.5f].CGPath;
+    _border.frame =_inputView.bounds;
     
     
     _scrollView.contentSize=CGSizeMake(0, (_inputView.frame.origin.y + _inputView.frame.size.height));//inputview Height + is； postion
@@ -255,6 +266,21 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     }
 }
 
+- (void)removeTags:(NSArray *)tags
+{
+    for (NSString *tag in tags)
+    {
+        NSArray *result = [_tagsMade filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"SELF == %@", tag]];
+        if (result)
+        {
+            [_tagsMade removeObjectsInArray:result];
+        }
+    }
+    
+    [self reArrangeSubviews];
+}
+
+
 - (void)removeTag:(NSString *)tag animated:(BOOL)animated
 {
     NSInteger foundedIndex = -1;
@@ -276,10 +302,13 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     [_tagsMade removeObjectAtIndex:foundedIndex];
     
     [self removeTagViewWithIndex:foundedIndex animated:animated completion:^(BOOL finished){
-        _readyToDelete = YES;
+        if ( _inputView.frame.origin.y <= _viewMaxHeight) {
+            _readyToDelete = YES;
+        }
+
         [UIView animateWithDuration:0.25 animations:^{
             [self layoutInputAndScroll];
-            [self setScrollOffsetToShowInputView];
+           // [self setScrollOffsetToShowInputView];
 
         }completion:^(BOOL finished) {
             _readyToDelete = NO;
@@ -354,15 +383,17 @@ static CGFloat IPHONE5_WIDTH = 640/2;
   //  CGFloat inputViewY = _inputView.frame.origin.y;
     CGRect rect =self.frame;
     rect.size.height = _inputView.frame.origin.y + _textViewHeight+_tagGap;
-    
-    [UIView animateWithDuration:0.25 animations:^{
-        self.frame = rect;
+    if (rect.size.height <= _viewMaxHeight) {
         
-    }];
-    
-
-    if ([_delegate respondsToSelector:@selector(tagWriteView:increaseViewHeigt:)]) {
-        [_delegate tagWriteView:self increaseViewHeigt:_textViewHeight+_tagGap];
+        [UIView animateWithDuration:0.25 animations:^{
+            self.frame = rect;
+            
+        }];
+        
+        
+        if ([_delegate respondsToSelector:@selector(tagWriteView:increaseViewHeigt:)]) {
+            [_delegate tagWriteView:self increaseViewHeigt:_textViewHeight+_tagGap];
+        }
     }
 
     
@@ -408,15 +439,16 @@ static CGFloat IPHONE5_WIDTH = 640/2;
      _tagViews = newTagBtns;
     
     
+    [self layoutInputAndScroll];
+    
 }
 
 - (UIButton *)tagButtonWithTag:(NSString *)tag posX:(CGFloat)posX posY:(CGFloat)posY
 {
     UIButton *tagBtn = [[UIButton alloc] init];
     [tagBtn.titleLabel setFont:_font];
-    //    [tagBtn setBackgroundColor:_tagBackgroundColor];
+    //[tagBtn setBackgroundColor:_tagBackgroundColor];
     [tagBtn setTitleColor:_tagForegroundColor forState:UIControlStateNormal];
-//    [tagBtn showBorder:_tagForegroundColor];
     [self showBorderForView:tagBtn color:_tagBackgroundColor];
     [tagBtn addTarget:self action:@selector(tagButtonDidPushed:) forControlEvents:UIControlEventTouchUpInside];
     [tagBtn setTitle:tag forState:UIControlStateNormal];
@@ -456,43 +488,22 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     _exceedMaxWidth = NO;
     HYTextField *textField = (HYTextField *)obj.object;
     
-    NSString *toBeString = textField.text;
-    NSString *lang = [[UITextInputMode currentInputMode] primaryLanguage]; // 键盘输入模式
+    UITextRange *selectedRange = [textField markedTextRange];
+    NSString * selectedString = @"";
+    NSString* noneSelected = @"";
     
+    if (!selectedRange && textField.text.length > _maxTagLength) {
+        //没有高亮时
+        textField.text = [textField.text substringToIndex:_maxTagLength];
+        noneSelected = textField.text;
+    } else {
+        //当有高亮时，不做任何限制与处理
+        selectedString = [textField textInRange:selectedRange];
+        noneSelected = [textField.text stringByReplacingOccurrencesOfString:selectedString withString:@""];
+    }
     
-    if ([lang isEqualToString:@"zh-Hans"]) { // 简体中文输入，包括简体拼音，健体五笔，简体手写
-        UITextRange *selectedRange = [textField markedTextRange];
-        //获取高亮部分
-        UITextPosition *position = [textField positionFromPosition:selectedRange.start offset:0];
-        // 没有高亮选择的字，则对已输入的文字进行字数统计和限制
-        NSString* selectedString = [textField textInRange:selectedRange];
-        NSString* noneSelected = [textField.text stringByReplacingOccurrencesOfString:selectedString withString:@""];
-        
-        [selectedString sizeWithAttributes:@{NSFontAttributeName:_font}];
-        NSLog(@"%@ the width : %f ",selectedString, [selectedString sizeWithAttributes:@{NSFontAttributeName:_font}].width + inset);
-        if (!position) {
-            if (toBeString.length > _maxTagLength) {
-//                textField.text = [toBeString substringToIndex:_maxTagLength];
-            }
-        }
-        // 有高亮选择的字符串，则暂不对文字进行统计和限制
-        else{
-            if (toBeString.length > _maxTagLength) {
-//                textField.text = [toBeString substringToIndex:_maxTagLength];
-
-            }
-        }
-        [self setinputRectWidth:[self zhHansTextFieldWidth:selectedString noneSelected:noneSelected]];
-        
-    }
-    // 中文输入法以外的直接对其统计限制即可，不考虑其他语种情况
-    else{
-        if (toBeString.length > _maxTagLength) {
-//            textField.text = [toBeString substringToIndex:_maxTagLength];
-        }else{
-        }
-        [self setinputRectWidth:+[self zhHansTextFieldWidth:@"" noneSelected:toBeString]];
-    }
+    [self setinputRectWidth:[self zhHansTextFieldWidth:selectedString noneSelected:noneSelected]];
+    
     // 当输入框需要更长的宽时，把输入框转到下一行
     if (_inputView.frame.origin.x+_inputView.frame.size.width > self.frame.size.width) {
         [self reLayoutInputView];
@@ -529,12 +540,10 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     inputRect.size.width = [self widthForInputViewWithText:_inputView.text];
     inputRect.size.height = _textViewHeight;
     if ((inputRect.size.width+accumX) > self.frame.size.width-2*_tagGap) {
-//        numberOfRows++;
         
         accumX =_tagGap;
         accumY =  accumY + _textViewHeight +_tagGap;
         
-//        _addOneMoreRow = YES;
         
         inputRect.origin.x = accumX;
         inputRect.origin.y = accumY;
@@ -563,12 +572,13 @@ static CGFloat IPHONE5_WIDTH = 640/2;
         CGSize contentSize = _scrollView.contentSize;
         contentSize.height = inputRect.origin.y + _textViewHeight+_tagGap;
         _scrollView.contentSize = contentSize;
-    }
-    NSLog(@"_scrollview contentsize H9.2.2: %f", _scrollView.contentSize.height);
+        NSLog(@"_scrollview contentsize H9.2.2: %f", _scrollView.contentSize.height);
 
-//    CGSize contentSize = _scrollView.contentSize;
+    }
+
     
-    
+    [_border removeFromSuperlayer];
+
 
     
     [self setScrollOffsetToShowInputView];
@@ -580,7 +590,6 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 
     if ((_inputView.frame.origin.y + _textViewHeight >= self.frame.size.height && _viewMaxHeight >= self.frame.size.height + _textViewHeight + _tagGap )||_readyToDelete ) {
         NSLog(@"inputView y3: %f", _inputView.frame.origin.y);
-
         [self increaseViewHeight];
         
     }
@@ -588,8 +597,10 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 
     CGPoint scrollOffset = _scrollView.contentOffset;
     scrollOffset.y = _inputView.frame.origin.y +_textViewHeight +_tagGap - self.frame.size.height;
-    _scrollView.contentOffset = scrollOffset;
-    
+    if (scrollOffset.y >= 0) {
+        _scrollView.contentOffset = scrollOffset;
+    }
+
 }
 
 
@@ -606,6 +617,10 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     
     _inputView.frame = inputRect;
     
+    _border.path = [UIBezierPath bezierPathWithRoundedRect:_inputView.bounds cornerRadius:_inputView.frame.size.height*0.5f].CGPath;
+    _border.frame =_inputView.bounds;
+
+    [_inputView.layer addSublayer:_border];
     NSLog(@"inputView y2: %f", _inputView.frame.origin.y);
 
 
@@ -726,6 +741,8 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 #pragma mark - HYTextFieldDelegate
 -(BOOL)textField:(HYTextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)text{
     NSLog(@"|=====1");
+    [_deleteButton removeFromSuperview];
+
     if ([self isFinishLetter:text])
     {
         if (_exceedMaxWidth) {
@@ -757,11 +774,11 @@ static CGFloat IPHONE5_WIDTH = 640/2;
         // delete
         if (textField.text.length)
         {
-//              newText = [textField.text substringWithRange:NSMakeRange(0, textField.text.length - range.length)];
         }
         else
         {
             NSLog(@"删除");
+            [_deleteButton removeFromSuperview];
             [self detectBackspace];
             return NO;
         }
@@ -791,7 +808,11 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 }
 
 - (void)textViewDidBeginEditing:(UITextView *)textView
+
 {
+    _border.path = [UIBezierPath bezierPathWithRoundedRect:_inputView.bounds cornerRadius:_inputView.frame.size.height*0.5f].CGPath;
+    _border.frame = _inputView.bounds;
+    [_inputView.layer addSublayer:_border];
     if ([_delegate respondsToSelector:@selector(tagWriteViewDidBeginEditing:)])
     {
         [_delegate tagWriteViewDidBeginEditing:self];
@@ -801,7 +822,8 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 - (void)textViewDidEndEditing:(UITextView *)textView
 {
     
-    
+    [_border removeFromSuperlayer];
+
     if ([_delegate respondsToSelector:@selector(tagWriteViewDidEndEditing:)])
     {
         [_delegate tagWriteViewDidEndEditing:self];
