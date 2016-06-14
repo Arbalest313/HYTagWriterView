@@ -62,7 +62,6 @@
     
     if (view == _view1) {
         [_view2 addTagToLast:tag animated:YES];
-        
         [_view2 setTagViewsColor:BASE_COLOR forTag:tag];
     }
     

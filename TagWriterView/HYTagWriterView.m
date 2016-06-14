@@ -185,7 +185,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 -(void)setTagViewsColor:(UIColor *)color borderColor:(UIColor *)borderColor forTag:(NSString*)tag{
     for (UIButton *btn in _tagViews)
     {
-        if ([btn.titleLabel.text isEqualToString:tag]) {
+        if ([[btn.titleLabel.text uppercaseString] isEqualToString:[tag uppercaseString]]) {
             [btn setTitleColor:color forState:UIControlStateNormal];
             //            [btn showBorder:color];
             [self showBorderForView:btn color:borderColor];
