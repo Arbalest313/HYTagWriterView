@@ -242,8 +242,8 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     
     [self addTagViewToLast:tag animated:animated];
     [self layoutInputAndScroll];
-    
-    
+    DDLogDebug(@"%@",NSStringFromCGRect(((UIButton*)[_tagViews firstObject]).frame));
+    DDLogDebug(@"scroll view %@", NSStringFromCGRect(_scrollView.frame));
     if ([_delegate respondsToSelector:@selector(tagWriteView:didMakeTag:)])
     {
         [_delegate tagWriteView:self didMakeTag:tag];
@@ -696,7 +696,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
     
     [_border removeFromSuperlayer];
     _border = [CAShapeLayer layer];
-    _border.strokeColor = [UIColor colorWithRed:226 / 255.0 green:226 / 255.0 blue:226 / 255.0 alpha:1].CGColor;
+    _border.strokeColor = LINE_COLOR.CGColor;
     _border.fillColor = nil;
     _border.lineDashPattern = @[@1, @1];
     _border.path = [UIBezierPath bezierPathWithRoundedRect:_inputView.bounds cornerRadius:_inputView.frame.size.height*0.5f].CGPath;
@@ -762,7 +762,7 @@ static CGFloat IPHONE5_WIDTH = 640/2;
 
 #pragma mark - HYTextFieldDelegate
 -(BOOL)textField:(HYTextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)text{
-    
+    NSLog(@"|=====1");
     [_deleteButton removeFromSuperview];
     
     if ([self isFinishLetter:text])

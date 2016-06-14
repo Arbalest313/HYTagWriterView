@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>655DFF1F-5144-4204-B8C9-20DF99015EDF</string>
+	<key>IDESourceControlProjectName</key>
+	<string>TagWriterView</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>0364D92E294C7996367459444AE4765D11038D60</key>
+		<string>https://github.com/Arbalest313/HYTagWriterView.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>TagWriterView.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>0364D92E294C7996367459444AE4765D11038D60</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Arbalest313/HYTagWriterView.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>0364D92E294C7996367459444AE4765D11038D60</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>0364D92E294C7996367459444AE4765D11038D60</string>
+			<key>IDESourceControlWCCName</key>
+			<string>TagWriterView</string>
+		</dict>
+	</array>
+</dict>
+</plist>
